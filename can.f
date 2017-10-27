@@ -198,8 +198,8 @@ c      = a21*b11 + a22*b21 + a23*b31 => OK
      &        down,0,cart_comm,ireqs(4),ierr)
 
       do j=1,imax_l
-      do i=1,imax_l
       do k=1,imax_l
+      do i=1,imax_l
          c_l(i,j) = c_l(i,j) + a_l(i,k)*b_l(k,j)
       end do
       end do

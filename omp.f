@@ -15,9 +15,9 @@
 c.... omp
 c$omp parallel do
       do j=1,imax
+      do k=1,imax
       do i=1,imax
 ccdir$ simd
-      do k=1,imax
          c(i,j) = c(i,j) + a(i,k)*b(k,j)
       end do
       end do

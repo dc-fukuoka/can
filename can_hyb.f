@@ -247,8 +247,8 @@ c$omp single
 c$omp end single nowait
 c$omp do schedule(dynamic)
       do j=1,imax_l
-      do i=1,imax_l
       do k=1,imax_l
+      do i=1,imax_l
          c_l(i,j) = c_l(i,j) + a_l(i,k)*b_l(k,j)
       end do
       end do

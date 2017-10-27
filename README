@@ -17,34 +17,34 @@ Some notes for MPI and hybrid version:
 - imax/sqrt(np) must be an integer.
 - sqrt(np) must be an integer.
 
-performance comparison(matrix size: 4096x4096, Intel(R) Xeon(R) CPU E5-2680 0 @ 2.70GHz, 4 nodes, 4xQDR infiniband):
+performance comparison(matrix size: 4096x4096, Intel(R) Xeon(R) CPU E5-2680 0 @ 2.70GHz, 8 cores/socket, 2 sockets/node, 4 nodes, 4xFDR infiniband):
 
 == serial ==
-[fukuoka@rokuchan85 cannon]:25189>srun --mpi=pmi2 --cpu_bind=cores -c1 -m block:block -N1 -n1 ./seri
- serial time:   16.4637541770935        8.34797167120138      Gflops
-  trace:   4194330.21842071
-
+[fukuoka@selene71 can]$ ./seri
+ serial time:   12.8100309371948        10.7290102690491      Gflops
+ trace:   4194330.21842071
+ 
 == MKL dgemm() (single thread) ==
-[fukuoka@rokuchan85 cannon]:25191>MKL_NUM_THREADS=1 srun --mpi=pmi2 --cpu_bind=cores -c1 -m block:block -N1 -n1 ./dgemm
- dgemm time:   9.10843586921692        15.0891937370380      Gflops
-  trace:   4194330.21842071
-  
+[fukuoka@selene71 can]$ MKL_NUM_THREADS=1 ./dgemm
+ dgemm time:   7.46148896217346        18.4197757537077      Gflops
+ trace:   4194330.21842071
+ 
 == MKL dgemm() (16 threads) ==
-[fukuoka@rokuchan85 cannon]:25192>srun --mpi=pmi2 --cpu_bind=cores -c16 -m block:block -N1 -n1 ./dgemm
- dgemm time:  0.868834972381592        158.187639587368      Gflops
-  trace:   4194330.21842071
-  
+[fukuoka@selene71 can]$ MKL_NUM_THREADS=16 KMP_AFFINITY=compact ./dgemm
+ dgemm time:   1.30764889717102        105.103865241914      Gflops
+ trace:   4194330.21842071
+ 
 == OpenMP (16 threads) ==
-[fukuoka@rokuchan85 cannon]:25194>srun --mpi=pmi2 --cpu_bind=cores -c16 -m block:block -N1 -n1 ./omp
-   omp time:   1.17839717864990        116.632113486104      Gflops
-    trace:   4194330.21842071
-    
+[fukuoka@selene71 can]$ OMP_NUM_THREADS=16 KMP_AFFINITY=compact ./omp
+ omp time:  0.919203042984009        149.519689388573      Gflops
+ trace:   4194330.21842071
+ 
 == MPI ==
-[fukuoka@rokuchan85 cannon]:25195>srun --mpi=pmi2 --cpu_bind=cores -c1 -m block:block -N4 -n64 ./can
- MPI time:  0.322515010833740        426.147462459821      Gflops
-  trace:   4194330.21842072
-
+[fukuoka@selene71 can]$ mpirun -hosts `nodeset -e -S"," selene[71-74]` -ppn 16 ./can
+ MPI time:  0.723188161849976        190.045911592938      Gflops
+ trace:   4194330.21842071
+ 
 == hybrid ==
-[fukuoka@rokuchan85 cannon]:25197>srun --mpi=pmi2 --cpu_bind=cores -c4 -m block:block -N4 -n16 ./can_hyb
- MPI time:  0.738125085830688        186.200084660889      Gflops
-  trace:   4194330.21842071
+[fukuoka@selene71 can]$ OMP_NUM_THREADS=4 KMP_AFFINITY=compact I_MPI_PIN_DOMAIN=omp mpirun -hosts `nodeset -e -S"," selene[71-74]` -ppn 4 ./can_hyb
+ MPI time:  0.671340942382812        204.723032359956      Gflops
+ trace:   4194330.21842071

@@ -45,4 +45,4 @@ $(CAN): generate.o can.o
 $(CAN_HYB): generate.o can_hyb.o
 	$(MPIFC) $(OPENMP) $(LFLAGS) $(LIBS) can_hyb.o generate.o -o $(CAN_HYB)
 clean:
-	rm -f *.o *.mod $(SERIAL) $(DGEMM) $(OMP) $(CAN) $(CAN_HYB)
+	rm -f *.o *.mod $(SERIAL) $(DGEMM) $(OMP) $(CAN) $(CAN_HYB) fort.*

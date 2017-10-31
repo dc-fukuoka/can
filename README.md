@@ -1,4 +1,4 @@
-can - A simple matrix-matrix mutiplication benchmark.
+can - A simple dense matrix-matrix mutiplication benchmark.
 ======
 there are serial, intel MKL dgemm(), OpenMP, MPI and hybrid versions.  
 MPI version is based on Cannon's algorithm.  

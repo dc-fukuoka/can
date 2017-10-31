@@ -17,7 +17,6 @@ c$omp parallel do
       do j=1,imax
       do k=1,imax
       do i=1,imax
-ccdir$ simd
          c(i,j) = c(i,j) + a(i,k)*b(k,j)
       end do
       end do
@@ -29,7 +28,6 @@ ccdir$ simd
       trace = 0.0d0
      
 c$omp parallel do reduction(+:trace)
-ccdir$ simd
       do i = 1, imax
          trace = trace + c(i,i)
       end do

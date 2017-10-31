@@ -32,10 +32,6 @@ c.... serial
       write(6,*) "trace:",trace
 
       write(55) c
-c         do i = 1,imax
-c            write(55,"(1024(1pe24.15))") (c(i,j),j=1,imax)
-c            write(32768,"(65536(1pe14.5))") (c(i,j),j=1,imax)
-c         end do
       
       stop
       end program main

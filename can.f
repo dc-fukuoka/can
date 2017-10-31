@@ -19,7 +19,6 @@
       integer::ireqs(4),istats(mpi_status_size,4)
       integer::index_i,index_j
       real*8::t0,time
-      character*16::frmt
       real*8::dclock
       real*8::trace
 
@@ -37,39 +36,12 @@
          stop
       end if
 
-c.... set format
-c      frmt="(xx(1pe19.10))"
-c      write(frmt(1:2),'(i2)'), imax
 
       if (iam.eq.0) then
          allocate(a(imax,imax),b(imax,imax),c(imax,imax))
          c(:,:) = 0.0d0
          call generate_randomno(a,imax,55555)
          call generate_randomno(b,imax,77777)
-
-c$$$c.... serial calculation
-c$$$         t0 = dclock()
-c$$$         do j = 1,imax
-c$$$         do i = 1,imax
-c$$$         do k = 1,imax
-c$$$            c(i,j) = c(i,j) + a(i,k)*b(k,j)
-c$$$         end do
-c$$$         end do
-c$$$         end do
-c$$$         time = dclock() - t0
-c$$$         write(6,*) "serial time:",time
-
-c         do i = 1,imax
-c            write(900,frmt) (c(i,j),j=1,imax)
-c.... check global matrix
-c            write(300,"(32(1pe14.5))") (a(i,j),j=1,imax)
-c            write(350,"(9(1pe14.5))") (b(i,j),j=1,imax)
-c            write(888,"(1024(1pe14.5))") (c(i,j),j=1,imax)
-c            write(900) c
-c         end do
-
-c... reinit c
-c         c(:,:) = 0.0d0
       end if
 
       imax_l = imax/dsqrt(dble(np))
@@ -100,8 +72,6 @@ c            index_i=mod(imax_l,i)*imax_l+1
             end if
 
             index_j=(j-1)*imax_l+1
-c            write(6,*) "i:",i,"k:",k, 
-d     &           "index_i:",index_i,"index_j:",index_j
             k=k+1
             call mpi_send(a(index_i,index_j),1,newtype,i,
      &           0,mpi_comm_world,ierr)
@@ -114,13 +84,6 @@ d     &           "index_i:",index_i,"index_j:",index_j
          call mpi_recv(b_l(1,1),imax_l*imax_l,mpi_real8,0,1,
      &        mpi_comm_world,istat,ierr)
       end if
-
-c.... check the order
-c.... OK
-c$$$      do i = 1,imax_l
-c$$$         write(400+iam,"(2(1pe14.5))") (a_l(i,j),j=1,imax_l)
-c$$$c         write(500+iam,"(2(1pe14.5))") (b_l(i,j),j=1,imax_l)
-c$$$      end do
 
 c.... define cartesian coordinte
       prds(1) = .true.
@@ -135,9 +98,6 @@ c.... define cartesian coordinte
 
       call mpi_cart_shift(cart_comm,0,1,left,right,ierr)
       call mpi_cart_shift(cart_comm,1,1,up,down,ierr)
-
-c.... order:OK
-c      write(6,*) iam,left,right,up,down
 
 c.... initialize the order
 c a11 a12 a13    a11 a12 a13
@@ -156,21 +116,10 @@ c b31 b32 b33    b31 b12 b23
      &     src,1,dest,1,cart_comm,istat,ierr)
 
 
-c.... check the order
-c.... OK
-c$$$      do i = 1,imax_l
-c$$$         write(400+iam,"(2(1pe14.5))") (a_l(i,j),j=1,imax_l)
-c$$$         write(500+iam,"(2(1pe14.5))") (b_l(i,j),j=1,imax_l)
-c$$$      end do
-
       call mpi_barrier(mpi_comm_world,ierr)
       t0 = mpi_wtime()
 
 c.... main loop
-c.... order:OK
-c      write(6,*) iam,left,right,up,down
-
-c.... initialize the order
 c a : rotate left direction
 c a11 a12 a13    a12 a13 a11    a13 a11 a12
 c a22 a23 a21 => a23 a21 a22 => a21 a22 a23
@@ -222,12 +171,6 @@ c     &     up,1,down,1,cart_comm,istat,ierr)
      &        time,flop/time/1000000000, "Gflops" 
       end if
 
-c.... check the answer before gather
-c.... ok
-c$$$      do i = 1,imax_l
-c$$$         write(600+iam,"(3(1pe14.5))") (c_l(i,j),j=1,imax_l)
-c$$$      end do
-
 c.... gather local matrices into global one
       if (iam.eq.0) then
          c(1:imax_l,1:imax_l) = c_l(1:imax_l,1:imax_l)
@@ -246,12 +189,9 @@ c            index_i=mod(imax_l,i)*imax_l+1
                k=1
             end if
             index_j=(j-1)*imax_l+1
-c            write(6,*) "i:",i,"k:",k, 
-c     &           "index_i:",index_i,"index_j:",index_j
             k=k+1
             call mpi_recv(c(index_i,index_j),1,newtype,i,0,
      &           mpi_comm_world,istat,ierr)
-c            j=j+1
          end do
       else
          call mpi_send(c_l(1,1),imax_l*imax_l,mpi_real8,0,0,
@@ -266,10 +206,6 @@ c.... check result
          end do
          write(6,*) "trace:",trace
          write(999) c
-c         do i = 1,imax
-c            write(999,"(1024(1pe24.15))") (c(i,j),j=1,imax)
-c            write(999,"(32768(1pe14.5))") (c(i,j),j=1,imax)
-c         end do
       end if
 
 c.... finalize

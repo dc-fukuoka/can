@@ -74,3 +74,9 @@ $ OMP_NUM_THREADS=4 KMP_AFFINITY=compact I_MPI_PIN_DOMAIN=omp srun --mpi=pmi2 -N
  hybrid time:   20.0198850631714        439.367808279245      Gflops
  trace:   67110044.2091656
 ~~~
+* MKL dgemm() (16 threads)
+~~~
+KMP_AFFINITY=compact srun -N1 -n1 ./dgemm
+ dgemm time:   38.2716109752655        229.833362068109      Gflops
+ trace:   67110044.2091656
+~~~

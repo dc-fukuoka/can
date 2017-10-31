@@ -55,7 +55,7 @@ $ mpirun -hosts `nodeset -e -S"," selene[71-74]` -ppn 16 ./can
 * hybrid
 ~~~
 $ OMP_NUM_THREADS=4 KMP_AFFINITY=compact I_MPI_PIN_DOMAIN=omp mpirun -hosts `nodeset -e -S"," selene[71-74]` -ppn 4 ./can_hyb
- MPI time:  0.671340942382812        204.723032359956      Gflops
+ hybrid time:  0.671340942382812        204.723032359956      Gflops
  trace:   4194330.21842071
 ~~~
 
@@ -72,6 +72,6 @@ $ srun --mpi=pmi2 -N16 -n256 -c1 --cpu_bind=cores -m block:block ./can
 * hybrid
 ~~~
 $ OMP_NUM_THREADS=4 KMP_AFFINITY=compact I_MPI_PIN_DOMAIN=omp srun --mpi=pmi2 -N16 -n64 -c4 --cpu_bind=cores -m block:block ./can_hyb
- MPI time:   20.0198850631714        439.367808279245      Gflops
+ hybrid time:   20.0198850631714        439.367808279245      Gflops
  trace:   67110044.2091656
 ~~~

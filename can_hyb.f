@@ -270,7 +270,7 @@ c$omp end parallel
       time = mpi_wtime() - t0
 
       if (iam.eq.0) then
-         write(6,*) "MPI time:",
+         write(6,*) "hybrid time:",
      &        time,flop/time/1000000000, "Gflops" 
       end if
 

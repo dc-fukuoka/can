@@ -57,7 +57,7 @@ $ MKL_NUM_THREADS=28 KMP_AFFINITY=compact ./dgemm
  dgemm time:   1.08629608154297        126.520711808868      Gflops
  trace:   4196462.48061815
 ~~~
-* OpenMP (16 threads)
+* OpenMP (28 threads)
 ~~~
 $ OMP_NUM_THREADS=28 KMP_AFFINITY=compact ./omp
  omp time:  0.852473020553589        161.223816071913      Gflops

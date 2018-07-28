@@ -61,7 +61,8 @@ $ MKL_NUM_THREADS=28 KMP_AFFINITY=compact ./dgemm
 ~~~
 $ OMP_NUM_THREADS=28 KMP_AFFINITY=compact ./omp
  omp time:  0.852473020553589        161.223816071913      Gflops
- trace:   4196462.48061815~~~
+ trace:   4196462.48061815
+~~~
 * MPI
 ~~~
 $ mpiexec.hydra -ppn 16 -np 64 ./can

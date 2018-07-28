@@ -7,9 +7,16 @@
       real*8::t0,time,dclock
       real*8::trace
 
-      c(:,:) = 0.0d0
-      call generate_randomno(a,imax,55555)
-      call generate_randomno(b,imax,77777)
+      open(unit=ia,file="a",     form="unformatted",access="stream")
+      open(unit=ib,file="b",     form="unformatted",access="stream")
+      open(unit=ic,file="c.seri",form="unformatted",access="stream")
+
+      read(ia) a
+      read(ib) b
+      c = 0.0d0
+
+      close(ia)
+      close(ib)
 
       t0 = dclock()
 c.... serial
@@ -31,7 +38,8 @@ c.... serial
 
       write(6,*) "trace:",trace
 
-      write(55) c
+      write(ic) c
+      close(ic)
       
       stop
       end program main

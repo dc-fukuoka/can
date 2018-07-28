@@ -5,6 +5,7 @@
       real(8),dimension(imax*imax)::c1,c2
       real(8)::maxerr
       integer::i,j
+      integer,parameter::iic(2)=(/100,200/)
 
       if (iargc().ne.2) then
          write(6,*) "two arguments are needed."
@@ -15,10 +16,10 @@
          call getarg(i, file(i))
       end do
 
-      open(10000,file=file(1),form="unformatted")
-      open(10001,file=file(2),form="unformatted")
-      read(10000) c1
-      read(10001) c2
+      open(unit=iic(1),file=file(1),form="unformatted",access="stream")
+      open(unit=iic(2),file=file(2),form="unformatted",access="stream")
+      read(iic(1)) c1
+      read(iic(2)) c2
 
       maxerr = 0.0d0
 c$omp parallel do reduction(max:maxerr)
@@ -28,8 +29,8 @@ c$omp parallel do reduction(max:maxerr)
 
       write(6,*) "maximum error:",maxerr
 
-      close(10000)
-      close(10001)
+      close(iic(1))
+      close(iic(2))
       
       stop
       end program main

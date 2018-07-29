@@ -1,7 +1,7 @@
       program main
       implicit none
       include "param.f"
-      integer*8::flop=imax*imax*imax*2
+      integer*8::flop=int(imax,8)**3*2
       real*8::a(imax,imax),b(imax,imax),c(imax,imax)
       integer::i,j,k
       real*8::t0,time,dclock

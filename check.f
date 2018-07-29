@@ -6,6 +6,7 @@
       real(8)::maxerr
       integer::i,j
       integer,parameter::iic(2)=(/100,200/)
+      integer::iargc
 
       if (iargc().ne.2) then
          write(6,*) "two arguments are needed."

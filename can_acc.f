@@ -138,12 +138,6 @@ c      = a11*b12 + a12*b22 + a13*b32 => OK
 c$acc enter data copyin(a_l(:,:),b_l(:,:))
 c$acc& create(c_l(:,:))
       do l=1,dims(1)
-c$acc host_data use_device(a_l(:,:),b_l(:,:))
-         call mpi_sendrecv_replace(a_l,imax_l*imax_l,mpi_real8,
-     &     left,0,right,0,cart_comm,istat,ierr)
-         call mpi_sendrecv_replace(b_l,imax_l*imax_l,mpi_real8,
-     &     up,1,down,1,cart_comm,istat,ierr)
-c$acc end host_data
 c$acc parallel private(i,j,k,l)
 c$acc& present(a_l(:,:),b_l(:,:),c_l(:,:))        
 c$acc loop
@@ -155,6 +149,12 @@ c$acc loop
       end do
       end do
 c$acc end parallel
+c$acc host_data use_device(a_l(:,:),b_l(:,:))
+         call mpi_sendrecv_replace(a_l,imax_l*imax_l,mpi_real8,
+     &     left,0,right,0,cart_comm,istat,ierr)
+         call mpi_sendrecv_replace(b_l,imax_l*imax_l,mpi_real8,
+     &     up,1,down,1,cart_comm,istat,ierr)
+c$acc end host_data
       end do
 c$acc exit data copyout(c_l(:,:))
 c$acc& delete(a_l(:,:),b_l(:,:))

@@ -7,7 +7,6 @@
       integer::iam,np,ierr
       integer*8::flop=int(imax,kind=8)**3*2
       real*8,allocatable::a_l(:,:),b_l(:,:),c_l(:,:)
-      real*8,allocatable::a_l_tmp(:,:),b_l_tmp(:,:),c_l_tmp(:,:)
       integer::imax_l
       integer::i,j,k,l
       integer::up,down,left,right,coords(2)
@@ -64,8 +63,6 @@
 
       allocate(a_l(imax_l,imax_l),b_l(imax_l,imax_l),
      &     c_l(imax_l,imax_l))
-      allocate(a_l_tmp(imax_l,imax_l),b_l_tmp(imax_l,imax_l),
-     &     c_l_tmp(imax_l,imax_l))
       
 c.... datatype for parallel read/write
       sizes(1)    = imax
@@ -139,17 +136,14 @@ c c12  = a12*b22 + a13*b32 + a11*b12
 c      = a11*b12 + a12*b22 + a13*b32 => OK
 
 c$acc enter data copyin(a_l(:,:),b_l(:,:))
-c$acc& create(c_l(:,:),a_l_tmp(:,:),b_l_tmp(:,:))
+c$acc& create(c_l(:,:))
       do l=1,dims(1)
-c$acc update host(a_l(:,:),b_l(:,:))
-         call mpi_isend(a_l,imax_l*imax_l,mpi_real8,
-     &        left,0,cart_comm,ireqs(1),ierr)
-         call mpi_isend(b_l,imax_l*imax_l,mpi_real8,
-     &        up,1,cart_comm,ireqs(2),ierr)
-         call mpi_irecv(a_l_tmp,imax_l*imax_l,mpi_real8,
-     &        right,0,cart_comm,ireqs(3),ierr)
-         call mpi_irecv(b_l_tmp,imax_l*imax_l,mpi_real8,
-     &        down,1,cart_comm,ireqs(4),ierr)
+c$acc host_data use_device(a_l(:,:),b_l(:,:))
+         call mpi_sendrecv_replace(a_l,imax_l*imax_l,mpi_real8,
+     &     left,0,right,0,cart_comm,istat,ierr)
+         call mpi_sendrecv_replace(b_l,imax_l*imax_l,mpi_real8,
+     &     up,1,down,1,cart_comm,istat,ierr)
+c$acc end host_data
 c$acc parallel private(i,j,k,l)
 c$acc& present(a_l(:,:),b_l(:,:),c_l(:,:))        
 c$acc loop
@@ -161,26 +155,9 @@ c$acc loop
       end do
       end do
 c$acc end parallel
-c.... overlap      
-      call mpi_waitall(4,ireqs,istats,ierr)
-c$acc update device(a_l_tmp(:,:),b_l_tmp(:,:))
-c$acc parallel private(i,j)
-c$acc& present(a_l(:,:),a_l_tmp(:,:),
-c$acc& b_l(:,:),b_l_tmp(:,:))
-c$acc loop
-      do k=1,imax_l
-      do j=1,imax_l
-      do i=1,imax_l
-         a_l(i,j) = a_l_tmp(i,j)
-         b_l(i,j) = b_l_tmp(i,j)
-      end do
-      end do
-      end do
-c$acc end parallel
       end do
 c$acc exit data copyout(c_l(:,:))
-c$acc& delete(a_l(:,:),b_l(:,:),
-c$acc& a_l_tmp(:,:),b_l_tmp(:,:))
+c$acc& delete(a_l(:,:),b_l(:,:))
       call mpi_barrier(mpi_comm_world,ierr)
       time = mpi_wtime() - t0
 
@@ -233,7 +210,6 @@ c.... finalize
       call mpi_comm_free(diag_comm,ierr)
       call mpi_type_free(ifiletype,ierr)
       deallocate(a_l,b_l,c_l)
-      deallocate(a_l_tmp,b_l_tmp,c_l_tmp)
 
       call mpi_finalize(ierr)
 

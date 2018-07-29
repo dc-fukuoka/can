@@ -91,22 +91,22 @@ $ ./check c.seri c.can_hyb
 MPI+OpenACC version
 -------
 PGI compiler, OpenMPI and intel MKL are required.  
-CPU and inteterconnect are the same as normal version, GPU is nvidia P100x4 per 1 node.  
+CPU and inteterconnect are the same as normal version, GPU is nvidia P100x4 per 1 node.
+GPUDirect is used.  
 ~~~
 $ make -f makefile.acc.mk
 $ ./create_input
 $ ./seri
- serial time:    51.39800500000000         2.674013387718064      Gflops
+ serial time:    51.68619100000000         2.659103927236580      Gflops
  trace:    4196462.480618147
-$  mpirun -x LD_LIBRARY_PATH -npernode 4 -np 16 ./can_acc
- imax:         4096
- MPI time:   0.2325633987784386         590.9741351988800      Gflops
- trace:    4196462.480618145
+$  mpirun -x LD_LIBRARY_PATH -x PSM2_CUDA=1 -x PSM2_GPUDIRECT=1 -npernode 4 -np 16 ./can_acc
+ MPI time:   0.1217727372422814         1128.651261230572      Gflops
+ trace:    4196462.480618146
 $ ./check c.seri c.can_acc
- maximum error:   1.4097167877480388E-011
+ maximum error:   1.2278178473934531E-011
 ~~~
 
-Large size test(16384x16384, 4nodes)
+Large size test(imax=16*1024, 4nodes)
 -------
 
 * hybrid(MPI+OpenMP), intel compiler and intel MPI
@@ -118,7 +118,7 @@ OMP_NUM_THREADS=$((28/4)) KMP_AFFINITY=compact mpiexec.hydra -ppn 4 -np 16 ./can
 
 * hybrid(MPI+OpenACC), PGI compiler and OpenMPI
 ~~~
-$ mpirun -x LD_LIBRARY_PATH -npernode 4 -np 16 ./can_acc
- MPI time:    19.99106211587787         440.0012851354065      Gflops
+$ mpirun -x LD_LIBRARY_PATH -x PSM2_CUDA=1 -x PSM2_GPUDIRECT=1 -npernode 4 -np 16 ./can_acc
+ MPI time:    4.504744562320411         1952.628589816666      Gflops
  trace:    67116321.70596765
 ~~~

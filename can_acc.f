@@ -212,10 +212,12 @@ c.... diagonal in the process grid
       call mpi_comm_split(mpi_comm_world,color,key,diag_comm,ierr)
       call mpi_comm_rank(diag_comm,diag_rank,ierr)
       trace   = 0.0d0
-c$omp parallel do reduction(+:trace)
+c$acc parallel private(i)
+c$acc loop reduction(+:trace)
       do i = 1,imax_l
          trace = trace + c_l(i,i)
       end do
+c$acc end parallel
       if (diag_rank.eq.0) then
          call mpi_reduce(mpi_in_place,trace,1,mpi_real8,mpi_sum,
      &        0,diag_comm,ierr)

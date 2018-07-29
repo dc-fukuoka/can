@@ -90,7 +90,7 @@ $ ./check c.seri c.can_hyb
 
 OpenACC version
 -------
-PGI compiler, OpenMPI and intel MKL are required.
+PGI compiler, OpenMPI and intel MKL are required.  
 CPU and inteterconnect are the same as normal version, GPU is nvidia P100x4 per 1 node.  
 ~~~
 $ make -f makefile.acc.mk

@@ -69,7 +69,7 @@ $ mpiexec.hydra -ppn 16 -np 64 ./can
  MPI time:  0.405706882476807        338.764165480622      Gflops
  trace:   4196462.48061815
 ~~~
-* hybrid
+* hybrid(MPI+OpenMP)
 ~~~
 $ OMP_NUM_THREADS=$((28/4)) KMP_AFFINITY=compact mpiexec.hydra -ppn 4 -np 16 ./can_hyb
  MPI time:  0.325567960739136        422.151347939683      Gflops
@@ -88,7 +88,7 @@ $ ./check c.seri c.can_hyb
  maximum error:  1.409716787748039E-011
 ~~~
 
-OpenACC version
+MPI+OpenACC version
 -------
 PGI compiler, OpenMPI and intel MKL are required.  
 CPU and inteterconnect are the same as normal version, GPU is nvidia P100x4 per 1 node.  

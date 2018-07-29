@@ -10,7 +10,7 @@ CHECK        = check
 FC      = ifort
 MPIFC   = mpiifort
 FCFLAGS = -g -O3 -march=core-avx2 -mcmodel=medium -shared-intel
-LFLAGS  = 
+LDFLAGS  = 
 LIBS    = -mkl
 OPENMP  = -fopenmp
 PREP    = -fpp
@@ -23,36 +23,36 @@ ALL: $(CREATE_INPUT) $(SERIAL) $(DGEMM) $(OMP) $(CAN) $(CAN_HYB) $(CHECK)
 $(VSL): $(MKLROOT)/include/mkl_vsl.f90
 	ifort -c $(FCFLAGS) $(MKLROOT)/include/mkl_vsl.f90
 
-create_input.o: create_input.f
+create_input.o: create_input.f param.f
 	$(FC) -c $(FCFLAGS) $<
 generate.o: generate.f $(VSL)
 	$(FC) -c $(FCFLAGS) $<
-seri.o: seri.f
+seri.o: seri.f param.f
 	$(FC) -c $(FCFLAGS) $<
-dgemm.o: dgemm.f
+dgemm.o: dgemm.f param.f
 	$(FC) -c $(FCFLAGS) $<
-omp.o: omp.f
+omp.o: omp.f param.f
 	$(FC) -c $(OPENMP) $(FCFLAGS) $<
-can.o: can.f
+can.o: can.f param.f
 	$(MPIFC) -c $(FCFLAGS) $<
-can_hyb.o: can_hyb.f
+can_hyb.o: can_hyb.f param.f
 	$(MPIFC) $(PREP) -c $(OPENMP) $(FCFLAGS) $<
-check.o: check.f
+check.o: check.f param.f
 	$(FC) -c $(OPENMP) $(FCFLAGS) $<
 
 $(CREATE_INPUT): generate.o create_input.o
-	$(FC) $(LFLAGS) $(LIBS) $^ -o $@
-$(SERIAL): generate.o seri.o
-	$(FC) $(LFLAGS) $(LIBS) $^ -o $@
-$(DGEMM): generate.o dgemm.o
-	$(FC) $(LFLAGS) $(LIBS) $^ -o $@
-$(OMP): generate.o omp.o
-	$(FC) $(OPENMP) $(LFLAGS) $(LIBS) $^ -o $@
-$(CAN): generate.o can.o
-	$(MPIFC) $(LFLAGS) $(LIBS) $^ -o $@
-$(CAN_HYB): generate.o can_hyb.o
-	$(MPIFC) $(OPENMP) $(LFLAGS) $(LIBS) $^ -o $@
+	$(FC) $(LDFLAGS) $(LIBS) $^ -o $@
+$(SERIAL): seri.o
+	$(FC) $^ -o $@
+$(DGEMM): dgemm.o
+	$(FC) $(LDFLAGS) $(LIBS) $^ -o $@
+$(OMP): omp.o
+	$(FC) $(OPENMP) $^ -o $@
+$(CAN): can.o
+	$(MPIFC) $^ -o $@
+$(CAN_HYB): can_hyb.o
+	$(MPIFC) $(OPENMP) $^ -o $@
 $(CHECK): check.o
-	$(FC) $(OPENMP) $(LFLAGS) $(LIBS) $^ -o $@
+	$(FC) $(OPENMP) $^ -o $@
 clean:
 	rm -f *.o *.mod *~ $(SERIAL) $(DGEMM) $(OMP) $(CAN) $(CAN_HYB) $(CREATE_INPUT) $(CHECK) a b c.seri c.omp c.dgemm c.can c.can_hyb

@@ -96,7 +96,6 @@ CPU and inteterconnect are the same as normal version, GPU is nvidia P100x4 per 
 $ make -f makefile.acc.mk
 $ ./create_input
 $ ./seri
-./seri
  serial time:    51.39800500000000         2.674013387718064      Gflops
  trace:    4196462.480618147
 $  mpirun -x LD_LIBRARY_PATH -npernode 4 -np 16 ./can_acc

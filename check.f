@@ -1,7 +1,7 @@
       program main
       implicit none
       include "param.f"
-      character(len=16)::file(2)
+      character(len=32)::file(2)
       real(8),dimension(imax*imax)::c1,c2
       real(8)::maxerr
       integer::i,j

@@ -143,7 +143,7 @@ c process 1
 c c12  = a12*b22 + a13*b32 + a11*b12
 c      = a11*b12 + a12*b22 + a13*b32 => OK
 
-c$omp parallelprivate(i,j,k,l)
+c$omp parallel private(i,j,k,l)
       do l=1,dims(1)
 c.... overlap
 c$omp single

@@ -107,8 +107,14 @@ $ ./check c.seri c.can_acc
  maximum error:   1.2278178473934531E-011
 ~~~
 
-Large size test(imax=16*1024, 4nodes)
+Large size test(imax=16*1024, 4 nodes)
 -------
+* flat MPI, intel compiler and intel MPI
+~~~
+$ mpiexec.hydra -ppn 16 -np 64 ./can
+ MPI time:   82.6075530052185        106.480493637819      Gflops
+ trace:   67116321.7059676
+~~~
 
 * hybrid(MPI+OpenMP), intel compiler and intel MPI
 ~~~

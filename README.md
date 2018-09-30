@@ -112,8 +112,8 @@ Large size test(imax=16*1024, 4nodes)
 
 * hybrid(MPI+OpenMP), intel compiler and intel MPI
 ~~~
-OMP_NUM_THREADS=$((28/4)) KMP_AFFINITY=compact mpiexec.hydra -ppn 4 -np 16 ./can_hyb
- MPI time:   40.7684469223022        215.757373317945      Gflops
+$  OMP_NUM_THREADS=$((28/4)) KMP_AFFINITY=compact mpiexec.hydra -ppn 4 -np 16 ./can_hyb
+ MPI time:   40.3734800815582        217.868090747666      Gflops
  trace:   67116321.7059676
 ~~~
 

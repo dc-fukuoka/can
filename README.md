@@ -109,21 +109,21 @@ $ ./check c.seri c.can_acc
 
 Large size test(imax=16*1024, 4 nodes)
 -------
-* flat MPI, intel compiler and intel MPI
+* flat MPI, 64 cores, intel compiler and intel MPI
 ~~~
 $ mpiexec.hydra -ppn 16 -np 64 ./can
  MPI time:   82.6075530052185        106.480493637819      Gflops
  trace:   67116321.7059676
 ~~~
 
-* hybrid(MPI+OpenMP), intel compiler and intel MPI
+* hybrid(MPI+OpenMP), 112 cores, intel compiler and intel MPI
 ~~~
 $  OMP_NUM_THREADS=$((28/4)) KMP_AFFINITY=compact mpiexec.hydra -ppn 4 -np 16 ./can_hyb
  MPI time:   40.3734800815582        217.868090747666      Gflops
  trace:   67116321.7059676
 ~~~
 
-* hybrid(MPI+OpenACC), PGI compiler and OpenMPI
+* hybrid(MPI+OpenACC), 16 GPUs, PGI compiler and OpenMPI
 ~~~
 $ mpirun -x LD_LIBRARY_PATH -x PSM2_CUDA=1 -x PSM2_GPUDIRECT=1 -npernode 4 -np 16 ./can_acc
  MPI time:    4.504744562320411         1952.628589816666      Gflops
